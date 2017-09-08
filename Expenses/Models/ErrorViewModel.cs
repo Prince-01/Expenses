@@ -1,5 +1,3 @@
-using System;
-
 namespace Expenses.Models
 {
     public class ErrorViewModel

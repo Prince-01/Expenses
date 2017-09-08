@@ -1,0 +1,26 @@
+﻿@model Expenses.Models.ExpenseViewModels.Expense
+
+<form asp-action="PayForExpense" id="payForExpenseForm">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="ExpenseId" />
+    <div class="form-group">
+        <label asp-for="PaidDate" class="control-label"></label>
+        <input asp-for="PaidDate" class="form-control" />
+        <span asp-validation-for="PaidDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="PaidValue" class="control-label"></label>
+        <input asp-for="PaidValue" class="form-control" />
+        <span asp-validation-for="PaidValue" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+    </div>
+</form>
+<script>
+    function initializePayment(id, value) {
+        $('#payForExpenseForm #ExpenseId').val(id);
+        $('#payForExpenseForm #PaidValue').val(value);
+        $('#payForExpenseForm #PaidDate').val('');
+    }
+</script>

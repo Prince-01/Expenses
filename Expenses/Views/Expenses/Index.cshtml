@@ -1,0 +1,121 @@
+﻿@using Expenses.Models.ExpenseViewModels
+@model IEnumerable<Expenses.Models.ExpenseViewModels.Expense>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+@await Html.PartialAsync("_Create", new Expense())
+
+<table class="table">
+    <thead>
+        <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Description)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Created)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DateFor)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Value)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Paid)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaidDate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PaidValue)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IAmPayer)
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Interactor)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Created)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateFor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Value)
+            </td>
+            <td>
+                @if (item.Paid)
+                {
+                    @Html.DisplayFor(modelItem => item.Paid)
+                }
+                else
+                {
+                    <a href="#" onclick="initializePayment('@item.ExpenseId', '@item.Value')" data-toggle="modal" data-target="#payForExpense">@Html.DisplayFor(modelItem => item.Paid)</a>
+                }
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaidDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PaidValue)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IAmPayer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Interactor.InteractorId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ExpenseId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ExpenseId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ExpenseId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<!-- Modal -->
+<div id="payForExpense" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Pay for expense</h4>
+            </div>
+            <div class="modal-body">
+                @await Html.PartialAsync("_PayForExpense", new Expense())
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

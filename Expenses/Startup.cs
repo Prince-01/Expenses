@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +33,9 @@ namespace Expenses
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
+
+            services.AddDbContext<ExpensesContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("ExpensesContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,106 @@
+﻿@model Expenses.Models.ExpenseViewModels.Expense
+<div class="row">
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateFor" class="control-label"></label>
+                <input asp-for="DateFor" class="form-control" />
+                <span asp-validation-for="DateFor" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Value" class="control-label"></label>
+                <input asp-for="Value" class="form-control" />
+                <span asp-validation-for="Value" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="Paid" /> @Html.DisplayNameFor(model => model.Paid)
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label asp-for="PaidDate" class="control-label"></label>
+                <input asp-for="PaidDate" class="form-control" />
+                <span asp-validation-for="PaidDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PaidValue" class="control-label"></label>
+                <input asp-for="PaidValue" class="form-control" />
+                <span asp-validation-for="PaidValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label>
+                        <input asp-for="IAmPayer" /> @Html.DisplayNameFor(model => model.IAmPayer)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="InteractorId" class="control-label"></label>
+                <div class="input-group">
+                    <select asp-for="InteractorId" class="form-control" asp-items="ViewBag.InteractorId"></select>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-plus" id="addInteractor"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#addInteractor').click(function() {
+            $.sweetModal.prompt('New interactor name?', null, null, function(val) {
+                $.ajax({
+                    url: '@Url.Action("CreateInteractor")',
+                    method: 'POST',
+                    data: {interactorName: val},
+                    success: function(response) {
+                        if (response === true) {
+                            $.sweetModal({
+                                content: 'Interactor added.',
+                                icon: $.sweetModal.ICON_SUCCESS,
+                                buttons: [
+                                    {
+                                        label: 'That\'s fine',
+                                        action: function () {
+                                            location.reload();
+                                        }
+
+                                    }
+                                ]
+                            });
+                        } else {
+                            $.sweetModal({
+                                content: 'Error occurred.',
+                                icon: $.sweetModal.ICON_ERROR
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
