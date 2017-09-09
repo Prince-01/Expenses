@@ -4,7 +4,7 @@ namespace ExpensesMobile.Models
 {
     public class ExpenseFile
     {
-        [PrimaryKey]
+        [PrimaryKey, AutoIncrement]
         public int ExpenseFileId { get; set; }
         public string Name { get; set; }
         public long Size { get; set; }

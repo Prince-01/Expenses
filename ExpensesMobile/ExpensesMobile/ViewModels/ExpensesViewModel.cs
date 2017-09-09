@@ -22,8 +22,8 @@ namespace ExpensesMobile.ViewModels
             MessagingCenter.Subscribe<NewExpensePage, Expense>(this, "AddItem", async (obj, item) =>
             {
                 var _item = item as Expense;
-                Items.Add(_item);
                 await ExpensesDataStore.AddItemAsync(_item);
+                Items.Add(_item);
             });
         }
 

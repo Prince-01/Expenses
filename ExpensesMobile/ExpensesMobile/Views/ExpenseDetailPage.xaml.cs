@@ -1,4 +1,5 @@
-﻿using ExpensesMobile.Models;
+﻿using System;
+using ExpensesMobile.Models;
 using ExpensesMobile.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -27,6 +28,11 @@ namespace ExpensesMobile.Views
         {
             var file = e.SelectedItem as ExpenseFile;
             viewModel.FileService.GetFile(file.Name, file.File);
+        }
+
+        private void PayForExpense_Clicked(object sender, EventArgs e)
+        {
+            Navigation.PushModalAsync(new PayForExpensePage(new PayForExpenseViewModel { PaidDate = viewModel.Item.DateFor ?? DateTime.Now, PaidValue = viewModel.Item.Value.ToString() }));
         }
     }
 }

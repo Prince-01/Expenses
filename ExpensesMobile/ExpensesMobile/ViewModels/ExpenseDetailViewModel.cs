@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using ExpensesMobile.Models;
+using ExpensesMobile.Views;
 using Xamarin.Forms;
 
 namespace ExpensesMobile.ViewModels
@@ -18,6 +19,14 @@ namespace ExpensesMobile.ViewModels
             {
                 ExpenseFiles.Add(expenseFile);
             }
+
+            MessagingCenter.Subscribe<PayForExpensePage, Expense>(this, "PayForExpense", async (obj, it) =>
+            {
+                Item.PaidDate = it.PaidDate;
+                Item.PaidValue = it.PaidValue;
+                Item.Paid = true;
+                await ExpensesDataStore.UpdateItemAsync(Item);
+            });
         }
 
         public ObservableCollection<ExpenseFile> ExpenseFiles { get; set; }
@@ -39,10 +48,13 @@ namespace ExpensesMobile.ViewModels
 
         public async Task AddAFile()
         {
-            var file = await FileService.AddFile();
-            var expenseFiles = new ExpenseFile {ExpenseId = Item.ExpenseId, File = file.Bytes, Name = file.Name};
-            Item.ExpenseFiles.Add(expenseFiles);
-            ExpenseFiles.Add(expenseFiles);
+            await FileService.AddFile((file) =>
+            {
+                var expenseFiles = new ExpenseFile {ExpenseId = Item.ExpenseId, File = file.Bytes, Name = file.Name, Size = file.Size};
+                Item.ExpenseFiles.Add(expenseFiles);
+                ExpensesDataStore.UpdateItemAsync(Item);
+                ExpenseFiles.Add(expenseFiles);
+            });
         }
 
         public string DescriptionLine1 => $"Za \"{Item.Name}\", gdzie do zapłacenia było {Item.Value} w dniu {Item.DateFor} na rzecz {(Item.IAmPayer ? "kontrahenta" : "Ciebie")}.{(string.IsNullOrEmpty(Item.Description) ? "" : "\nOpis:")}";

@@ -3,12 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ExpensesMobile.Views.ExpenseDetailPage"
              Title="{Binding Title}">
-    <StackLayout Spacing="20" Padding="15">
-        <Label Text="{Binding DescriptionLine1}" FontSize="Medium"/>
-        <Label Text="{Binding Item.Description}" FontSize="Small"/>
-        <Label Text="{Binding DescriptionLine2}" FontSize="Medium"/>
-        <Button Text="Dodaj plik" Command="{Binding AddFile}"></Button>
-        <ListView x:Name="ItemsListView"
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Pay" Clicked="PayForExpense_Clicked" />
+    </ContentPage.ToolbarItems>
+    <ContentPage.Content>
+        <StackLayout Spacing="20" Padding="15">
+            <Label Text="{Binding DescriptionLine1}" FontSize="Medium"/>
+            <Label Text="{Binding Item.Description}" FontSize="Small"/>
+            <Label Text="{Binding DescriptionLine2}" FontSize="Medium"/>
+            <Button Text="Dodaj plik" Command="{Binding AddFile}"></Button>
+            <ListView x:Name="ItemsListView"
                   ItemsSource="{Binding ExpenseFiles}"
                   VerticalOptions="FillAndExpand"
                   HasUnevenRows="true"
@@ -16,18 +20,19 @@
                   IsPullToRefreshEnabled="true"
                   IsRefreshing="{Binding IsBusy, Mode=OneWay}"
                   ItemSelected="OnFileSelected">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>
-                        <StackLayout Padding="10">
-                            <Label Text="{Binding Name}"
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="10">
+                                <Label Text="{Binding Name}"
                                    LineBreakMode="NoWrap"
                                    Style="{DynamicResource ListItemTextStyle}"
                                    FontSize="16"/>
-                        </StackLayout>
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </StackLayout>
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>

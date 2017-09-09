@@ -15,13 +15,13 @@ namespace ExpensesMobile.Services
         bool isInitialized;
         List<Item> items;
 
-        public async Task<bool> AddItemAsync(Item item)
+        public async Task<int> AddItemAsync(Item item)
         {
             await InitializeAsync();
 
             items.Add(item);
 
-            return await Task.FromResult(true);
+            return await Task.FromResult(1);
         }
 
         public async Task<bool> UpdateItemAsync(Item item)
@@ -45,11 +45,11 @@ namespace ExpensesMobile.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<Item> GetItemAsync(string id)
+        public async Task<Item> GetItemAsync(int id)
         {
             await InitializeAsync();
 
-            return await Task.FromResult(items.FirstOrDefault(s => s.Id == id));
+            return await Task.FromResult(items.FirstOrDefault());
         }
 
         public async Task<IEnumerable<Item>> GetItemsAsync(bool forceRefresh = false)

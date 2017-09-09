@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ExpensesMobile.Views.PayForExpensePage">
+    <ContentPage.Content>
+        <StackLayout Padding="15">
+            <Label Text="Paid value" FontSize="Medium" />
+            <Entry Keyboard="Numeric" Text="{Binding PaidValue}" FontSize="Small" />
+            <Label Text="Paid date" FontSize="Medium" />
+            <DatePicker Date="{Binding PaidDate}">
+                <DatePicker.Format>yyyy-MM-dd</DatePicker.Format>
+            </DatePicker>
+            <Button Text="Add expense" Clicked="Save_Clicked"></Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

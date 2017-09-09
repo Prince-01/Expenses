@@ -6,7 +6,7 @@ namespace ExpensesMobile.Models
 {
     public class Expense
     {
-        [PrimaryKey]
+        [PrimaryKey, AutoIncrement]
         public int ExpenseId { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

@@ -24,7 +24,8 @@ namespace ExpensesMobile.Views
             if (item == null)
                 return;
 
-            await Navigation.PushAsync(new ExpenseDetailPage(new ExpenseDetailViewModel(item)));
+            var dbItem = await viewModel.ExpensesDataStore.GetItemAsync(item.ExpenseId);
+            await Navigation.PushAsync(new ExpenseDetailPage(new ExpenseDetailViewModel(dbItem)));
 
             // Manually deselect item
             ExpensesListView.SelectedItem = null;

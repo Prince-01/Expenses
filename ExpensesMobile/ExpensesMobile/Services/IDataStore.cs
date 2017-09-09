@@ -6,10 +6,10 @@ namespace ExpensesMobile.Services
 {
     public interface IDataStore<T>
     {
-        Task<bool> AddItemAsync(T item);
+        Task<int> AddItemAsync(T item);
         Task<bool> UpdateItemAsync(T item);
         Task<bool> DeleteItemAsync(T item);
-        Task<T> GetItemAsync(string id);
+        Task<T> GetItemAsync(int id);
         Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false);
         Task<IEnumerable<T>> GetItemsAsync(Predicate<T> pred, bool forceRefresh = false);
 

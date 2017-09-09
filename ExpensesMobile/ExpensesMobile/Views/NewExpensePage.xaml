@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=System.Runtime"
              x:Class="ExpensesMobile.Views.NewExpensePage"
              Title="New Expense">
     <ContentPage.ToolbarItems>
@@ -8,26 +9,36 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <ScrollView>
-            <StackLayout Spacing="20" Padding="15">
+            <StackLayout Padding="15">
                 <Label Text="Text" FontSize="Medium" />
-                <Entry Text="{Binding Item.Name}" FontSize="Small" />
+                <Entry Text="{Binding Name}" FontSize="Small" />
                 <Label Text="Description" FontSize="Medium" />
-                <Editor Text="{Binding Item.Description}" FontSize="Small" Margin="0" />
+                <Editor Text="{Binding Description}" FontSize="Small" Margin="0" />
                 <Label Text="Value" FontSize="Medium" />
-                <Entry Text="{Binding Item.Value}" FontSize="Small" />
+                <Entry Keyboard="Numeric" Text="{Binding Value}" FontSize="Small" />
                 <Label Text="Date for" FontSize="Medium" />
-                <Entry Text="{Binding Item.DateFor}" FontSize="Small" />
-                <Label Text="Paid" FontSize="Medium" />
-                <Switch IsToggled="{Binding Item.Paid}" />
-                <Label Text="Paid value" FontSize="Medium" />
-                <Entry Text="{Binding Item.PaidValue}" FontSize="Small" />
-                <Label Text="Paid date" FontSize="Medium" />
-                <Entry Text="{Binding Item.PaidDate}" FontSize="Small" />
-                <Label Text="I am who pays!" FontSize="Medium" />
-                <Entry Text="{Binding Item.IAmPayer}" FontSize="Small" />
+                <DatePicker Date="{Binding DateFor}">
+                    <DatePicker.Format>yyyy-MM-dd</DatePicker.Format>
+                </DatePicker>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="I am who pays!" FontSize="Medium" />
+                    <Switch IsToggled="{Binding IAmPayer}" />
+                </StackLayout>
                 <Label Text="Contractor" FontSize="Medium" />
-                <Entry Text="{Binding Item.Interactor}" FontSize="Small" />
+                <Entry Text="{Binding Interactor}" FontSize="Small" />
                 <Button Text="Add expense" Clicked="Save_Clicked"></Button>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Paid" FontSize="Medium" />
+                    <Switch IsToggled="{Binding Paid}" />
+                </StackLayout>
+                <StackLayout Orientation="Vertical" IsVisible="{Binding Paid}">
+                    <Label Text="Paid value" FontSize="Medium" />
+                    <Entry Keyboard="Numeric" Text="{Binding PaidValue}" FontSize="Small" />
+                    <Label Text="Paid date" FontSize="Medium" />
+                    <DatePicker Date="{Binding PaidDate}">
+                        <DatePicker.Format>yyyy-MM-dd</DatePicker.Format>
+                    </DatePicker>
+                </StackLayout>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

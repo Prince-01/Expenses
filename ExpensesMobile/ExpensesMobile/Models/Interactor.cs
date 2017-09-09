@@ -5,7 +5,7 @@ namespace ExpensesMobile.Models
 {
     public class Interactor
     {
-        [PrimaryKey]
+        [PrimaryKey, AutoIncrement]
         public int InteractorId { get; set; }
         public string Name { get; set; }
         [Ignore]

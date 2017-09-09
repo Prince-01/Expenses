@@ -19,18 +19,21 @@ namespace ExpensesMobile.Services
         {
             _database = new SQLiteAsyncConnection(DependencyService.Get<IFileService>()
                 .GetLocalFilePath("ExpensesDatabase.db3"));
+
+            //_database.DropTableAsync<Interactor>().Wait();
+            //_database.DropTableAsync<Expense>().Wait();
+            //_database.DropTableAsync<ExpenseFile>().Wait();
+
             _database.CreateTableAsync<Interactor>().Wait();
             _database.CreateTableAsync<Expense>().Wait();
             _database.CreateTableAsync<ExpenseFile>().Wait();
         }
 
-        public async Task<bool> AddItemAsync(Expense item)
+        public async Task<int> AddItemAsync(Expense item)
         {
             await InitializeAsync();
 
-            await _database.InsertAsync(item);
-
-            return await Task.FromResult(true);
+            return await _database.InsertAsync(item);
         }
 
         public async Task<bool> UpdateItemAsync(Expense item)
@@ -38,6 +41,17 @@ namespace ExpensesMobile.Services
             await InitializeAsync();
 
             await _database.UpdateAsync(item);
+            var expenseFiles = await _database.Table<ExpenseFile>().ToListAsync();
+
+            foreach (var expenseFile in item.ExpenseFiles.Where(ef => ef.ExpenseFileId == 0))
+            {
+                expenseFile.ExpenseFileId = await _database.InsertAsync(expenseFile);
+            }
+
+            foreach (var expenseFile in expenseFiles.Where(ef => item.ExpenseFiles.All(eff => ef.ExpenseFileId != eff.ExpenseFileId)))
+            {
+                await _database.DeleteAsync(expenseFile);
+            }
 
             return await Task.FromResult(true);
         }
@@ -51,17 +65,17 @@ namespace ExpensesMobile.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<Expense> GetItemAsync(string id)
+        public async Task<Expense> GetItemAsync(int id)
         {
             await InitializeAsync();
 
-            var expense = await _database.Table<Expense>().Where(e => e.ExpenseId.ToString() == id).FirstAsync();
+            var expense = await _database.Table<Expense>().Where(e => e.ExpenseId == id).FirstAsync();
             if (expense.InteractorId != null)
             {
                 expense.Interactor = await _database.Table<Interactor>()
                     .Where(i => i.InteractorId == (int) expense.InteractorId).FirstAsync();
             }
-            expense.ExpenseFiles = await _database.Table<ExpenseFile>().Where(ef => ef.ExpenseId.ToString() == id)
+            expense.ExpenseFiles = await _database.Table<ExpenseFile>().Where(ef => ef.ExpenseId == id)
                 .ToListAsync();
 
             return expense;
@@ -77,7 +91,7 @@ namespace ExpensesMobile.Services
         {
             await InitializeAsync();
 
-            var expenses = await _database.Table<Expense>().Where(e => pred(e)).ToListAsync();
+            var expenses = (await _database.Table<Expense>().ToListAsync()).Where(e => pred(e)).ToList();
             var interactors = await _database.Table<Interactor>().ToListAsync();
 
             foreach (var expense in expenses.Where(e => e.InteractorId != null))

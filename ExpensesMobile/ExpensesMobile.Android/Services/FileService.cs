@@ -1,36 +1,43 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using Windows.Storage;
+using Android.Content;
+using Android.OS;
+using Android.Widget;
+using ExpensesMobile.Models;
 using ExpensesMobile.Services;
 using Xamarin.Forms;
+using Xamarin.Forms.PlatformConfiguration;
+using Environment = System.Environment;
 
-[assembly: Dependency(typeof(ExpensesMobile.UWP.Services.FileService))]
-namespace ExpensesMobile.UWP.Services
+[assembly: Dependency(typeof(ExpensesMobile.Droid.Services.FileService))]
+namespace ExpensesMobile.Droid.Services
 {
     public class FileService : IFileService
     {
+        internal static Action<ExpensesMobile.Models.File> _addFilePostAction;
+
         public async Task AddFile(Action<ExpensesMobile.Models.File> postAction)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".pdf");
+            _addFilePostAction = postAction;
 
-            Windows.Storage.StorageFile file = await picker.PickSingleFileAsync();
-            var f = await file.OpenReadAsync();
-            var stream = f.AsStream();
-            var mStream = new MemoryStream();
-            stream.CopyTo(mStream);
-            postAction(new ExpensesMobile.Models.File
+            Intent intent = new Intent(Intent.ActionGetContent);
+            intent.SetType("*/*");
+            intent.AddCategory(Intent.CategoryOpenable);
+
+            try
             {
-                Name = file.Name,
-                Bytes = mStream.ToArray(),
-                Size = mStream.Length
-            });
+                (Forms.Context as MainActivity).StartActivityForResult(
+                    Intent.CreateChooser(intent, "Select a File to Upload"), 1,
+                    Bundle.Empty);
+            }
+            catch (ActivityNotFoundException ex)
+            {
+                // Potentially direct the user to the Market with a Dialog
+                Toast.MakeText(Forms.Context, "Please install a File Manager.",
+                    ToastLength.Short).Show();
+            }
         }
 
         public async Task GetFile(string name, byte[] file)
@@ -56,7 +63,8 @@ namespace ExpensesMobile.UWP.Services
 
         public string GetLocalFilePath(string filename)
         {
-            return Path.Combine(ApplicationData.Current.LocalFolder.Path, filename);
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
+            return Path.Combine(path, filename);
         }
     }
 }
