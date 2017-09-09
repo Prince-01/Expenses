@@ -51,6 +51,7 @@
     <Compile Include="Services\ExpensesDataStore.cs" />
     <Compile Include="Services\IDataStore.cs" />
     <Compile Include="Services\IFileService.cs" />
+    <Compile Include="Services\InteractorsDataStore.cs" />
     <Compile Include="Services\MockDataStore.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />

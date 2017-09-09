@@ -14,13 +14,21 @@ namespace ExpensesMobile.ViewModels
         public bool Paid
         {
             get { return _paid; }
-            set { SetProperty(ref _paid, value); }
+            set
+            {
+                SetProperty(ref _paid, value);
+                PaidValue = Value;
+            }
         }
 
         public DateTime? PaidDate { get; set; }
 
         private double? _paidValue;
-        public double? PaidValue { get { return _paidValue; } set { SetProperty(ref _paidValue, value); } }
+        public double? PaidValue
+        {
+            get { return _paidValue; }
+            set { SetProperty(ref _paidValue, value); }
+        }
 
         private double _value;
         public double Value
