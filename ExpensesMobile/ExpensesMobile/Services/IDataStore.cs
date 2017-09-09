@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ExpensesMobile.Services
@@ -10,6 +11,7 @@ namespace ExpensesMobile.Services
         Task<bool> DeleteItemAsync(T item);
         Task<T> GetItemAsync(string id);
         Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false);
+        Task<IEnumerable<T>> GetItemsAsync(Predicate<T> pred, bool forceRefresh = false);
 
         Task InitializeAsync();
         Task<bool> PullLatestAsync();

@@ -59,6 +59,11 @@ namespace ExpensesMobile.Services
             return await Task.FromResult(items);
         }
 
+        public Task<IEnumerable<Item>> GetItemsAsync(Predicate<Item> pred, bool forceRefresh = false)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<bool> PullLatestAsync()
         {
             return Task.FromResult(true);

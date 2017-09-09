@@ -7,5 +7,6 @@ namespace ExpensesMobile.Services
     {
         Task<File> AddFile();
         Task GetFile(string name, byte[] file);
+        string GetLocalFilePath(string filename);
     }
 }

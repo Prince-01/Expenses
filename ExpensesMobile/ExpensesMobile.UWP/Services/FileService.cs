@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Windows.Storage;
 using ExpensesMobile.Services;
 using Xamarin.Forms;
 
@@ -50,6 +51,11 @@ namespace ExpensesMobile.UWP.Services
                 Name = file.Name,
                 Bytes = mStream.ToArray()
             };*/
+        }
+
+        public string GetLocalFilePath(string filename)
+        {
+            return Path.Combine(ApplicationData.Current.LocalFolder.Path, filename);
         }
     }
 }

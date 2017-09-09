@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ExpensesMobile.Models;
+using SQLite;
 using Xamarin.Forms;
 
 [assembly: Dependency(typeof(ExpensesMobile.Services.ExpensesDataStore))]
@@ -9,14 +11,24 @@ namespace ExpensesMobile.Services
 {
     public class ExpensesDataStore : IDataStore<Expense>
     {
-        bool isInitialized;
-        List<Expense> items;
+        bool _isInitialized;
+
+        private readonly SQLiteAsyncConnection _database;
+        
+        public ExpensesDataStore()
+        {
+            _database = new SQLiteAsyncConnection(DependencyService.Get<IFileService>()
+                .GetLocalFilePath("ExpensesDatabase.db3"));
+            _database.CreateTableAsync<Interactor>().Wait();
+            _database.CreateTableAsync<Expense>().Wait();
+            _database.CreateTableAsync<ExpenseFile>().Wait();
+        }
 
         public async Task<bool> AddItemAsync(Expense item)
         {
             await InitializeAsync();
 
-            items.Add(item);
+            await _database.InsertAsync(item);
 
             return await Task.FromResult(true);
         }
@@ -25,9 +37,7 @@ namespace ExpensesMobile.Services
         {
             await InitializeAsync();
 
-            var _item = items.Where((Expense arg) => arg.ExpenseId == item.ExpenseId).FirstOrDefault();
-            items.Remove(_item);
-            items.Add(item);
+            await _database.UpdateAsync(item);
 
             return await Task.FromResult(true);
         }
@@ -36,8 +46,7 @@ namespace ExpensesMobile.Services
         {
             await InitializeAsync();
 
-            var _item = items.Where((Expense arg) => arg.ExpenseId == item.ExpenseId).FirstOrDefault();
-            items.Remove(_item);
+            await _database.DeleteAsync(item);
 
             return await Task.FromResult(true);
         }
@@ -46,14 +55,37 @@ namespace ExpensesMobile.Services
         {
             await InitializeAsync();
 
-            return await Task.FromResult(items.FirstOrDefault(s => s.ExpenseId.ToString() == id));
+            var expense = await _database.Table<Expense>().Where(e => e.ExpenseId.ToString() == id).FirstAsync();
+            if (expense.InteractorId != null)
+            {
+                expense.Interactor = await _database.Table<Interactor>()
+                    .Where(i => i.InteractorId == (int) expense.InteractorId).FirstAsync();
+            }
+            expense.ExpenseFiles = await _database.Table<ExpenseFile>().Where(ef => ef.ExpenseId.ToString() == id)
+                .ToListAsync();
+
+            return expense;
+
         }
 
         public async Task<IEnumerable<Expense>> GetItemsAsync(bool forceRefresh = false)
         {
+            return await GetItemsAsync(e => true);
+        }
+
+        public async Task<IEnumerable<Expense>> GetItemsAsync(Predicate<Expense> pred, bool forceRefresh = false)
+        {
             await InitializeAsync();
 
-            return await Task.FromResult(items);
+            var expenses = await _database.Table<Expense>().Where(e => pred(e)).ToListAsync();
+            var interactors = await _database.Table<Interactor>().ToListAsync();
+
+            foreach (var expense in expenses.Where(e => e.InteractorId != null))
+            {
+                expense.Interactor = interactors.FirstOrDefault(i => i.InteractorId == expense.InteractorId);
+            }
+
+            return expenses;
         }
 
         public Task<bool> PullLatestAsync()
@@ -69,25 +101,12 @@ namespace ExpensesMobile.Services
 
         public async Task InitializeAsync()
         {
-            if (isInitialized)
+            if (_isInitialized)
                 return;
 
-            items = new List<Expense>();
-            var _items = new List<Expense>
-            {
-                new Expense {ExpenseId = 1, Name = "Za korki", Interactor = new Interactor {Name = "Rrrrr"}},
-                new Expense {ExpenseId = 2, Name = "Za bulki", Interactor = new Interactor {Name = "Kutas"}},
-                new Expense {ExpenseId = 3, Name = "Za loda", Description = "OPISEK", Interactor = new Interactor {Name = "Adad"}},
-                new Expense {ExpenseId = 4, Name = "Za frytki", Interactor = new Interactor {Name = "Pipa"}},
-                new Expense {ExpenseId = 5, Name = "Za robote"},
-            };
+            // do some initialization
 
-            foreach (var item in _items)
-            {
-                items.Add(item);
-            }
-
-            isInitialized = true;
+            _isInitialized = true;
         }
     }
 }
