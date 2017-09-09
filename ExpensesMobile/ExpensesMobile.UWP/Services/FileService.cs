@@ -28,7 +28,8 @@ namespace ExpensesMobile.UWP.Services
             return new ExpensesMobile.Models.File
             {
                 Name = file.Name,
-                Bytes = mStream.ToArray()
+                Bytes = mStream.ToArray(),
+                Size = mStream.Length
             };
         }
 
